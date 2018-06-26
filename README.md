@@ -17,7 +17,7 @@ Exits when message has been sent.
 
 A Docker Image is now publicly available. If you have a Docker Hub account and Docker installed on your host machine, the command to grab the image is **dfedock135/dslprclient**
 
-To run the client: **docker run --env serverad=XXX.XXX.XXX.XXX --env portnum XXXX --env videofile=path/somevideo dfedocke135/dslprclient:1.0**.
+To run the client: **docker run --env serverad=XXX.XXX.XXX.XXX --env portnum XXXX --env videofile=path/somevideo dfedocke135/dslprclient:1.0**
 
 ## Server
 Kept alive and is open to receive frames from Client sender. Python scripts initialize server instance and include dependencies for lincense plate recognition.
