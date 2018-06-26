@@ -5,17 +5,22 @@ Works via Client and Server distribution. Client operates as endpoint to send fr
 
 Must be in same subnet for correct functionality (i.e. client to know server). Can be accomplished using [IPoP](https://github.com/ipop-project), an open-source user-centric software virtual network.
 
-#### Coming soon
+### Unique Features
 **Message queue** to be enabled by [ZeroMQ](https://github.com/zeromq) for distributed messaging and queue management.
 
-**Container portability** via Docker images of OpenDSLPR Server & Client for simplified setup and tesing.
-
+**Container portability** via Docker images of OpenDSLPR Server & Client for simplified setup and tesing. Currently available for client.
 
 ## Client
-Python script receives video and sends to an IP address and port acting as the server.
+Python script receives video and sends to an IP address and port acting as the server. User is required to set destination IP address and port number as well as the video file that they are passing.
 
 Exits when message has been sent.
 
+A Docker Image is now publicly available. If you have a Docker Hub account and Docker installed on your host machine, the command to grab the image is **dfedock135/dslprclient**
+
+To run the client: **docker run --env serverad=XXX.XXX.XXX.XXX --env portnum XXXX --env videofile=path/somevideo dfedocke135/dslprclient:1.0**.
+
 ## Server
 Kept alive and is open to receive frames from Client sender. Python scripts initialize server instance and include dependencies for lincense plate recognition.
+
+Docker container coming soon.
  

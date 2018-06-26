@@ -1,7 +1,7 @@
 from openalpr import Alpr
 import cv2, sys, time
 
-class Recognize():
+class Recognize():  #initializing library
     global alpr, path
     alpr = Alpr("us", "/etc/openalpr/openalpr.conf", "/usr/share/openalpr/runtime_data")
     path = ''
@@ -17,7 +17,7 @@ class Recognize():
         print("OpenAlpr is loaded")
         time.sleep(2)
 
-    def put(self, frame):
+    def put(self, frame): #first writes
         global alpr, path
         cv2.imwrite(path + "/frame.jpg", frame)
         self.__utility(path + "/frame.jpg")
@@ -27,10 +27,10 @@ class Recognize():
         results, i = alpr.recognize_file(image_name), 0
         for plate in results['results']:
             i += 1
-            #print("Plate #%d" % i)
-            #print("   %12s %12s" % ("Plate", "Confidence"))
+            print("Plate #%d" % i)
+            print("   %12s %12s" % ("Plate", "Confidence"))
             for candidate in plate['candidates']:
                 prefix = "-"
                 if candidate['matches_template']:
                     prefix = "*"
-                #print("  %s %12s%12f" % (prefix, candidate['plate'], candidate['confidence']))
+                print("  %s %12s%12f" % (prefix, candidate['plate'], candidate['confidence']))
