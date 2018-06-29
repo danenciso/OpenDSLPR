@@ -16,7 +16,7 @@ class Config():
 		# Done with initialization, now bind server to port
 		context = zmq.Context()
 		self.receiver = context.socket(zmq.PULL)
-		self.receiver.bind("tcp://127.0.0.1:"+str(self.port))				#Tcp connection
+		self.receiver.bind("tcp://10.0.2.5:"+str(self.port))				#Tcp connection
 
 class RingBuffer():
 	def __init__(self, size):
