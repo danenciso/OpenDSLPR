@@ -1,0 +1,26 @@
+FROM python:2.7.15
+
+#Install modules
+RUN \
+  pip --version && \
+  rm -rf /var/lib/apt/lists/* && \
+  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+  apt-get update && \
+  apt-get install -y sudo && \
+  sudo apt-get install -y apt-utils build-dep build-essential && \
+  sudo apt-get install -y openalpr openalpr-daemon openalpr-utils libopenalpr-dev && \
+  sudo apt-get install -y python-pip && \
+  sudo pip install opencv-python pillow numpy pyzmq && \
+  sudo apt-get install -y tesseract-ocr libtesseract-dev && \
+  sudo apt-get install -y python-openalpr && \
+  sudo apt-get install -f && \
+  rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/local/bin
+COPY servstart.py .
+COPY sink.py .
+COPY utils.py .
+COPY recognition.py .
+#Install modules
+ENV portnum="1111" ringbuff="1000" predict="5" numcon="1"
+CMD python servstart.py $portnum $ringbuff $predict $numcon
