@@ -1,11 +1,8 @@
 # base image
-#FROM ubuntu:16.04
 FROM resin/rpi-raspbian
 ENTRYPOINT []
-# minimal install above requires additional work
 
-#  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-
+# set up environment for Python, ZeroMQ, and OpenCV
 RUN \
   apt-get update && \
   apt-get -y install apt-utils && \
@@ -30,7 +27,7 @@ RUN \
   apt-get -y install libzmq3-dev && \
   wget https://bootstrap.pypa.io/get-pip.py && \
   python get-pip.py && \
-  pip install --no-use-wheel pyzmq && \
+  pip install pyzmq && \
   cd ~/opencv  && \
   mkdir build && \
   cd build && \
@@ -41,11 +38,3 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 
-# Now include the application-specific
-WORKDIR /usr/local/bin
-COPY client.py .
-COPY v.mp4 .
-
-ENV serverad="10.0.0.0" portnum="1111" videofile="v.mp4"
-
-CMD python client.py $serverad $portnum $videofile
