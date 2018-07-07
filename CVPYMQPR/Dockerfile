@@ -3,6 +3,7 @@ FROM ubuntu:16.04
 
 # set up environment for Python, ZeroMQ, OpenCV, and OpenALPR
 RUN \
+  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y install apt-utils && \
   apt-get -y install wget cmake build-essential git pkg-config && \
