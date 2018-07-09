@@ -35,6 +35,6 @@ RUN \
   make && \
   make install && \
   ldconfig && \
-  rm -rf /var/lib/apt/lists/*
-
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf ~/opencv*
 

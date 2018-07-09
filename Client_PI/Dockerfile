@@ -1,4 +1,4 @@
-FROM dfedock135/rpi-cvpymq:1.0
+FROM dfedock135/rpi-cvpymq:2.0
 # Now include the application-specific
 WORKDIR /usr/local/bin
 COPY client.py .
