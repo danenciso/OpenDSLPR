@@ -35,7 +35,7 @@ RUN cd ~ && \
   apt-get -y install libzmq3-dev && \
   apt-get install -y openalpr openalpr-daemon openalpr-utils libopenalpr-dev && \
   apt-get install -y tesseract-ocr libtesseract-dev && \
-  apt-get install -y python-openalpr && \
+  apt-get install -y python-openalpr python-opencv && \
   wget https://bootstrap.pypa.io/get-pip.py && \
   python get-pip.py && \
   pip install pyzmq && \
