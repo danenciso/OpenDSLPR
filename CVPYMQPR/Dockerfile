@@ -1,18 +1,26 @@
 # base image
 FROM ubuntu:16.04
+RUN apt-get update
+RUN apt-get install locales
 
+# Set the locale
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+# Install dependencies
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update
 # set up environment for Python, ZeroMQ, OpenCV, and OpenALPR
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y install apt-utils && \
-  apt-get -y install wget cmake build-essential git pkg-config && \
-  apt-get -y install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev && \
-  apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev && \
-  apt-get -y install libxvidcore-dev libx264-dev && \
-  apt-get -y install libgtk2.0-dev && \
-  apt-get -y install libatlas-base-dev gfortran && \
-  cd ~ && \
+RUN apt-get -y install apt-utils
+RUN apt-get -yf install git build-essential cmake pkg-config wget
+RUN apt-get -yf install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev
+RUN apt-get -yf install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+RUN apt-get -yf install libxvidcore-dev libx264-dev
+RUN apt-get -yf install libgtk2.0-dev
+RUN apt-get -yf install libatlas-base-dev gfortran
+RUN cd ~ && \
   git clone https://github.com/opencv/opencv.git && \
   cd opencv && \
   git checkout 3.4 &&\
@@ -38,5 +46,5 @@ RUN \
   make && \
   make install && \
   ldconfig && \
-  rm -rf /var/lib/apt/lists/*
-
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf ~/opencv*
