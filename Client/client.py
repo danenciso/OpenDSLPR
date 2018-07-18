@@ -19,27 +19,43 @@ class Transmit():
 		
 	
 	#Send requests to controller - Ping the controller
-	def ping(self):
-		self.request.connect("tcp://"+self.cntrl_ip+":"+str(self.control_port))
-		self.request.send("CONNECT!"+str(self.identity))
-		print("CONNECT request sent to tcp://"+self.cntrl_ip+":"+str(self.control_port))
-		reply = self.request.recv()
+	def ping(self, msg_req):
+		self.request.connect("tcp://"+self.cntrl_ip+":"+self.control_port)
+		
+		if msg_req=="CONNECT":
+			self.request.send(msg_req+"!"+str(self.identity))
+			print("CONNECT request sent to tcp://"+self.cntrl_ip+":"+self.control_port)
+			reply = self.request.recv()
 
-		#reply of the form <status><!><6-digit-unique_ID><server_IP:data_port>
-		#					200!100000127.0.0.1:5556		(if success)
-		#					400!							(if failed)
-		if reply[:4]== "200!":
-			self.identity = reply[4:10]
-			address = reply[10:].split(":")
-			self.serv_ip = address[0]
-	   		self.data_port = address[1]
+			#reply of the form <status><!><6-digit-unique_ID><server_IP:data_port>
+			#					200!100000127.0.0.1:5556		(if success)
+			#					400!							(if failed)
+			if reply[:4]== "200!":
+				self.identity = reply[4:10]
+				address = reply[10:].split(":")
+				self.serv_ip = address[0]
+	   			self.data_port = address[1]
 	   	 	
-	   	 	print("Server accepted the connection")
-	   	 	print("I am assigned identity as "+self.identity)
-	   	 	return 1
-	   	else:
-	   		print("ERROR "+reply[:4])
-	   		return 0
+	   	 		print("Server accepted the connection")
+	   	 		print("I am assigned identity as "+self.identity)
+	   	 		return 1
+	   		else:
+	   			print("ERROR "+reply[:4])
+	   			return 0
+
+	   	elif msg_req=="DISCONNECT":
+	   		self.request.send(msg_req+"!"+str(self.identity))
+	   		print("DISCONNECT request sent to tcp://"+self.cntrl_ip+":"+self.control_port)
+			reply = self.request.recv()
+			if reply[:4]=="200!":
+				self.identity = 0
+				self.serv_ip = None
+	   			self.data_port = None
+	   			print("Disconnected gracefully")
+	   			return 1
+	   		else:
+	   			return 0
+
 
 	def connection(self):
 		#self.sender.setsockopt(zmq.SNDHWM, 100)
@@ -74,12 +90,24 @@ if __name__ == '__main__':
 		print("Usage: python <script_name> <controller_address> <RRport> <name_of_video_file>")
 		sys.exit()
 
+	do_exit = False
 	context = zmq.Context()
 	#print("Current libzmq version is %s" % zmq.zmq_version())
 	#print("Current  pyzmq version is %s" % zmq.__version__)
-	node = Transmit(sys.argv[1], int(sys.argv[2]))
-	status = node.ping()
+	node = Transmit(sys.argv[1], sys.argv[2])
+	status = node.ping("CONNECT")
 	time.sleep(1)
 	if status:
 		node.connection()
 		node.send(sys.argv[2])
+		while do_exit==False:
+			try:
+				time.sleep(0.1)
+			except KeyboardInterrupt:
+				status = node.ping("DISCONNECT")
+				if status==1:
+					do_exit=True
+				else:
+					continue
+		context.term()
+
