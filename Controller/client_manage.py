@@ -35,6 +35,10 @@ class ManageClients(StoppableThread):
 					config.command.send("CONNECT!"+clientID)
 					reply = config.command.recv()
 
+
+					#for reliable working of REQ-REP
+					config.command.disconnect("tcp://"+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
+
 					#reply consists of server's pull-port
 					print("received reply from server "+reply)
 					if(reply[:4]=="200!"):

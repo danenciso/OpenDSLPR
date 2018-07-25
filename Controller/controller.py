@@ -14,20 +14,27 @@ class Config():
 		self.client_list = []
 
 		self.context = zmq.Context()
-		#To communicate with server(s) by sending OUT requests
-		#This socket sends commands to server(s)
-		#IP address and port will be provided by server in its JOIN request
+		'''
+		- To communicate with server(s) by sending OUT requests
+		- This socket sends commands to server(s)
+		- IP address and port will be provided by other internal methods
+		- To have reliable working of the REQ-REP pattern, in ZMQ terminology, this socket must
+		  zmq.connect() and then zmq.disconnect() to/from the server IP address  
+		'''
 		self.command = self.context.socket(zmq.REQ)
-		
 
-		#To communicate with server(s) by sending OUT replies
-		#This socket LISTENS for requests from servers and replies accordingly
+		'''
+		- To communicate with server(s) by sending OUT replies
+		- This socket LISTENS for requests from servers and replies accordingly
+		'''
 		self.serv_reply_port = sys.argv[2]
 		self.serv_control = self.context.socket(zmq.ROUTER)
 		self.serv_control.bind("tcp://"+self.host_ip+":"+self.serv_reply_port)
 
-		#To communicate with client(s) by sending OUT replies
-		#This socket LISTENS for requests from clients and replies accordingly
+		'''
+		- To communicate with client(s) by sending OUT replies
+		- This socket LISTENS for requests from clients and replies accordingly
+		'''
 		self.client_reply_port = sys.argv[3]
 		self.client_control = self.context.socket(zmq.ROUTER)
 		self.client_control.bind("tcp://"+self.host_ip+":"+self.client_reply_port)

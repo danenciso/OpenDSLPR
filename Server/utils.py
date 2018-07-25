@@ -31,9 +31,11 @@ class Scan(StoppableThread):
 	def _scan(self, config):
 		receive = config.command.recv()
 		print(receive)
-		if receive=="CHECK!":
+		#print("checking for "+"CHECK!"+config.host_ip+config.command_port)
+		if receive=="CHECK!"+config.host_ip+":"+config.command_port:
 			print("Controller nudged me with CHECK!")
 			config.command.send("200!")
+			print("sent reply 200!")
 
 		#Connect clients to server
 		elif receive[:8] == "CONNECT!":
@@ -49,6 +51,7 @@ class Scan(StoppableThread):
 		else:
 			#400 - Bad request
 			config.command.send("400!")
+			print("sent reply 400!")
 
 class Control():
 	@staticmethod

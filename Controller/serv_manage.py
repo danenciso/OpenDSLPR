@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import zmq, threading, thread
+import zmq, threading, thread, time
 from controller_utils import StoppableThread
 
 class ManageServers(StoppableThread):
@@ -18,18 +18,22 @@ class ManageServers(StoppableThread):
 		if receive[:5] == "JOIN!" and receive[5]=="0":
 			try:
 				config.command.connect("tcp://"+receive[6:])
-				config.command.send("CHECK!")
-				print("Sent CHECK! to server on tcp://"+receive[6:])
+				req = "CHECK!"+receive[6:]
+				config.command.send(req)
+				#print("Sent CHECK! to server on tcp://"+receive[6:])
 				reply = config.command.recv()
 				print("in response to nudge, received from server "+reply)
+
 				while reply == "400!":
 					#retry nudging the server
 					config.command.connect("tcp://"+receive[6:])
-					config.command.send("CHECK!")
+					req = "CHECK!"+receive[6:]
+					config.command.send(req)
 					print("Resent CHECK! to server on tcp://"+receive[6:])
 					reply = config.command.recv()
 					print("in response to nudge, received from server "+reply)
 
+				
 				if reply == "200!":
 					if not config.serv_meta:
 						servID = "s100"
@@ -49,6 +53,9 @@ class ManageServers(StoppableThread):
 			except:
 				config.serv_control.send_multipart([server, "", "400!"])
 				#400 - Bad request
+
+			#for reliable working of REQ-REP
+			config.command.disconnect("tcp://"+receive[6:])
 			
 
 		elif receive[:-1] == "DISJOIN!" and receive[-1]!="0":
