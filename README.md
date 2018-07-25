@@ -3,16 +3,17 @@ Open Distributed Streaming of License Plate Recognition. Provides scripts to man
 
 ## What's new?
 A new controller module is introduced. The controller authenticates the clients & servers and is supposed to manage the overall client/server network.\
-The code uses zmq PUSH-PULL communication pattern for data transfer and zmq REQ-REP pattern for control and command.\
+The code uses zmq PUSH-PULL communication pattern for data transfer and zmq ROUTER-REP and REQ-REP patterns for control and command.\
 Designed to be scalable and introduces commands and error codes.\
-Basic testing is done.
+A *ClientConnectionRule* is introduced that can be used to dynamically control which clients are connected to which servers. The module can be easily expanded to add new rules./
+Testing is done to a good extent.
 
 ## Terminology
 A server JOINS a network, effectively after being authenticated by the controller, and it DISJOINS to leave the network.\
 A client CONNECTS to the server(after authentication by controller) and DISCONNECTS from the server.
 
 ## Known Issues
-The code is known to work **only** for **single client- single server** model. The *ManageServers* thread blocks after first server is joined, similarly, the *ManageClients* thread blocks after first client is connected.
+None
 
 ## Controller
 To be updated
