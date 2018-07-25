@@ -5,7 +5,7 @@ Open Distributed Streaming of License Plate Recognition. Provides scripts to man
 A new controller module is introduced. The controller authenticates the clients & servers and is supposed to manage the overall client/server network.\
 The code uses zmq PUSH-PULL communication pattern for data transfer and zmq ROUTER-REP and REQ-REP patterns for control and command.\
 Designed to be scalable and introduces commands and error codes.\
-A *ClientConnectionRule* is introduced that can be used to dynamically control which clients are connected to which servers. The module can be easily expanded to add new rules./
+A *ClientConnectionRule* feature is introduced that can be used to dynamically control which clients are connected to which servers. The module can be easily expanded to add new rules.\
 Testing is done to a good extent.
 
 ## Terminology
