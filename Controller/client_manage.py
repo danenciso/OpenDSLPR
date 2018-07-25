@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import zmq, threading, thread
-from controller_utils import StoppableThread
+from controller_utils import StoppableThread, ClientConnectRule
 
 class ManageClients(StoppableThread):
 	def __init__(self, config):
@@ -17,7 +17,11 @@ class ManageClients(StoppableThread):
 		print(receive)
 		#Ensure the 'connect' request is from a new client
 		if receive[:-1] == "CONNECT!" and receive[-1]=="0":
-			find_server = sorted(config.serv_load.iteritems(), key=lambda (k,v):(v,k))
+			'''
+			- find_server is a list sorted as per rule specified
+			- rule 0 is the default rule which does load balancing based on number of clients connected to each server
+			'''
+			find_server = ClientConnectRule.connect_rule(config,0)
 
 			if find_server:
 				print("came inside find_server")
@@ -29,7 +33,7 @@ class ManageClients(StoppableThread):
 					clientID = str(int(config.client_list[-1]) + 1)
 
 				err_count = 0
-				for server,load in find_server:
+				for server in find_server:
 					print("connecting to "+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
 					config.command.connect("tcp://"+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
 					config.command.send("CONNECT!"+clientID)

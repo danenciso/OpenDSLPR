@@ -8,8 +8,10 @@ class Config():
 		self.host_ip = sys.argv[1]
 		# {servID: no_of_clients, servID:2}
 		self.serv_load = dict()
+
 		# {servID:[IP_address, port, clientID, clientID,...], servID:[...]}
 		self.serv_meta = dict()
+		
 		# [clientID, clientID,...]
 		self.client_list = []
 

@@ -1,6 +1,19 @@
 #!/usr/bin/env python
 import threading, thread
 
+class ClientConnectRule():
+    @staticmethod
+    def connect_rule(config, rule):
+        #rule = 0 is default rule, which does load balancing
+        if rule==0:
+            serv_list = sorted(config.serv_load.iteritems(), key=lambda (k,v):(v,k))
+            servers = []
+            for serv_tuple in serv_list:
+                servers.append(serv_tuple[0])
+            return servers
+        else:
+            return []
+
 class StoppableThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
