@@ -18,7 +18,7 @@ class ManageClients(StoppableThread):
 		#Ensure the 'connect' request is from a new client
 		if receive[:-1] == "CONNECT!" and receive[-1]=="0":
 			'''
-			- find_server is a list sorted as per rule specified
+			- find_server is a list that is sorted as per the rule specified
 			- rule 0 is the default rule which does load balancing based on number of clients connected to each server
 			'''
 			find_server = ClientConnectRule.connect_rule(config,0)

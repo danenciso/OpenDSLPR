@@ -1,19 +1,26 @@
-#Compression
+#!/usr/bin/env python
 import os
 import sys
 import zmq
 from PIL import Image
-import sys, numpy, cv2, time, os
+import sys, numpy, cv2, time, os, settings
 
 class Transmit():
 	def __init__(self, cntrl_address, control_port):
 		self.sender = context.socket(zmq.PUSH)
 		self.request = context.socket(zmq.REQ)
 
-		self.serv_ip = None									#IP address of server, as received from controller
-		self.data_port = None								#Send frames to server
-		self.command_port = None							#Send requests to server(if any)
-		self.control_port = control_port					#Send control requests to controller
+		#IP address of server, as received from controller
+		self.serv_ip = None
+
+		#Send frames to server on this port
+		self.data_port = None
+
+		#Send requests to server(if any)
+		self.command_port = None
+
+		#Send control requests to controller
+		self.control_port = control_port
 		self.cntrl_ip = cntrl_address
 		self.identity = 0
 		
@@ -66,9 +73,11 @@ class Transmit():
 		capture = cv2.VideoCapture(os.getcwd() + "/" + video_file)            #capturing the video
 		count=0
 		while 1:
-			return_val, frame = capture.read()   #breaking into frames
+			#breaking into frames
+			return_val, frame = capture.read()
 			if return_val:
-				data = cv2.imencode('.jpg', frame)[1].tostring()   #numpy func converting into bytes(not string)(name tostring is misleading)
+				#numpy func converting into bytes(not string)(name tostring is misleading)
+				data = cv2.imencode('.jpg', frame)[1].tostring()
 				self.sender.send(data+'END!')
 				sys.stdout.write(".")
 				sys.stdout.flush()
@@ -86,20 +95,17 @@ class Transmit():
 		print("--------------End of frame parsing--------------")
 
 if __name__ == '__main__':
-	if len(sys.argv) != 4:
-		print("Usage: python <script_name> <controller_address> <RRport> <name_of_video_file>")
-		sys.exit()
-
 	do_exit = False
 	context = zmq.Context()
 	#print("Current libzmq version is %s" % zmq.zmq_version())
 	#print("Current  pyzmq version is %s" % zmq.__version__)
-	node = Transmit(sys.argv[1], sys.argv[2])
+	node = Transmit(settings.client['controller_ip'], settings.client['rrport'])
+	
 	status = node.ping("CONNECT")
 	time.sleep(1)
 	if status:
 		node.connection()
-		node.send(sys.argv[2])
+		node.send(settings.client['video_file'])
 		while do_exit==False:
 			try:
 				time.sleep(0.1)
@@ -110,4 +116,3 @@ if __name__ == '__main__':
 				else:
 					continue
 		context.term()
-

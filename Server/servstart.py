@@ -1,13 +1,15 @@
-import sink, sys, time, thread, threading, utils
+import settings, sink, sys, time, thread, threading, utils
 
 if __name__ == '__main__':
-	if len(sys.argv) != 9:
-		print("Usage : python <script_name> <IP-address> <Controller-IP> <Control-Port> <Command-port> <Data-Port> <Size_of_Ring_Buffer> <Predictions> <No_of_Connections> ")
+	if len(sys.argv) != 2:
+		print("Usage : python <script_name> <IP-address>")
+		#<Controller-IP> <Control-Port> <Command-port> <Data-Port> <Size_of_Ring_Buffer> <Predictions> <No_of_Connections> 
 		sys.exit()
 
 	do_exit = False
-	servconfig = sink.Config() 		#intitialize port, number of clients, buffer size, etc
-	#print("Connected to client")
+	
+	#intitialize port, number of clients, buffer size, etc
+	servconfig = sink.Config()
 
 	#Command-port starts listening for any commands from controller in future
 	#Spawns thread internally when constructor is called

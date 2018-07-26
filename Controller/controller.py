@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-import sys, os, zmq, time, threading, thread	
+import settings, sys, os, zmq, time, threading, thread	
 from serv_manage import ManageServers
 from client_manage import ManageClients
 
 class Config():
 	def __init__(self):
-		self.host_ip = sys.argv[1]
+		self.host_ip = settings.controller['ip_add']
 		# {servID: no_of_clients, servID:2}
 		self.serv_load = dict()
 
@@ -29,7 +29,7 @@ class Config():
 		- To communicate with server(s) by sending OUT replies
 		- This socket LISTENS for requests from servers and replies accordingly
 		'''
-		self.serv_reply_port = sys.argv[2]
+		self.serv_reply_port = settings.controller['serv_control_port']
 		self.serv_control = self.context.socket(zmq.ROUTER)
 		self.serv_control.bind("tcp://"+self.host_ip+":"+self.serv_reply_port)
 
@@ -37,15 +37,11 @@ class Config():
 		- To communicate with client(s) by sending OUT replies
 		- This socket LISTENS for requests from clients and replies accordingly
 		'''
-		self.client_reply_port = sys.argv[3]
+		self.client_reply_port = settings.controller['client_control_port']
 		self.client_control = self.context.socket(zmq.ROUTER)
 		self.client_control.bind("tcp://"+self.host_ip+":"+self.client_reply_port)
 
 if __name__ == '__main__':
-	if len(sys.argv) != 4:
-		print("Usage : python <script_name> <IP_address> <Server-Reply-Port> <Client-Reply-Port>")
-		sys.exit()
-
 	do_exit = False
 	ctrl_config = Config()
 	print("Controller is listening for requests ...")

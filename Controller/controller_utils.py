@@ -11,6 +11,12 @@ class ClientConnectRule():
             for serv_tuple in serv_list:
                 servers.append(serv_tuple[0])
             return servers
+        '''
+        Add more rules in elif statements
+
+        elif rule==1:
+            blah blah blah
+        '''
         else:
             return []
 

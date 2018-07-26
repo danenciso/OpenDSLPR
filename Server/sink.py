@@ -1,4 +1,4 @@
-import threading, numpy, cv2, time, datetime, thread, signal, sys, os, zmq
+import settings, threading, numpy, cv2, time, datetime, thread, signal, sys, os, zmq
 from recognition import Recognize
 from utils import RingBuffer
 from PIL import Image	
@@ -6,31 +6,37 @@ from PIL import Image
 class Config():
 	def __init__(self):
 		self.host_ip = sys.argv[1]
-		self.control_ip = sys.argv[2]
-		self.no_of_conn = int(sys.argv[8])             			#remove if don't want a limit on number of connected clients
-		self.client_list = [] 									#a structure consisting of identities of clients
-		self.servID = "0"										#Must be updated after JOIN request to controller 
+		self.control_ip = settings.server['controller_ip']
+
+		#sets a limit on number of clients that can connect to a server
+		self.no_of_conn = int(settings.server['no_of_conn'])
+
+		#a structure consisting of identities of clients
+		self.client_list = []
+
+		#servID must be updated after JOIN request to controller
+		self.servID = "0" 
 
 		#client specific - may need to be pushed to another client specific class
-		self.ring_buffer = RingBuffer(int(sys.argv[6]))
-		self.open_alpr = Recognize(int(sys.argv[7]), "ca", os.getcwd())
-		self.complete = False   											#may need revision
-		self.msg_count=0 													#only for debug purposes
+		self.ring_buffer = RingBuffer(int(settings.server['buffer_size']))
+		self.open_alpr = Recognize(int(settings.server['predictions']), "ca", os.getcwd())
+		self.complete = False   #may need revision
+		self.msg_count=0 		#only for debug purposes
 		
 		#Bind server to ports
 		context = zmq.Context()
 		#To send requests to controller
-		self.control_port = sys.argv[3]
+		self.control_port = settings.server['control_port']
 		self.control = context.socket(zmq.REQ)
 		self.control.connect("tcp://"+self.control_ip+":"+self.control_port)
 
 		#To respond to requests of client(s)
-		self.command_port = sys.argv[4]
+		self.command_port = settings.server['command_port']
 		self.command = context.socket(zmq.REP)
 		self.command.bind("tcp://"+self.host_ip+":"+self.command_port)
 
 		#To pull frames from client(s)
-		self.data_port = sys.argv[5]						   			#port to be connected
+		self.data_port = settings.server['data_port']
 		self.receiver = context.socket(zmq.PULL)
 		self.receiver.bind("tcp://"+self.host_ip+":"+self.data_port)
 

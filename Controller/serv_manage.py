@@ -36,8 +36,8 @@ class ManageServers(StoppableThread):
 				
 				if reply == "200!":
 					if not config.serv_meta:
+						#serv_meta empty
 						servID = "s100"
-						#empty
 					else:
 						serv_list = sorted(config.serv_meta)
 						servID = "s"+str(int(serv_list[-1][1:])+1)
@@ -51,8 +51,8 @@ class ManageServers(StoppableThread):
 					config.serv_control.send_multipart([server, "", msg])
 
 			except:
-				config.serv_control.send_multipart([server, "", "400!"])
 				#400 - Bad request
+				config.serv_control.send_multipart([server, "", "400!"])
 
 			#for reliable working of REQ-REP
 			config.command.disconnect("tcp://"+receive[6:])
