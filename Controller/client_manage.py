@@ -73,7 +73,7 @@ class ManageClients(StoppableThread):
 				config.client_control.send_multipart([client, "", "503!"])
 
 		#Ensure the 'disconnect' request is from a valid client
-		elif receive[:-1] == "DISCONNECT!" and receive[-1]!="0":
+		elif receive[:11] == "DISCONNECT!" and receive[11:]!="0":
 			print("feature not complete, but disconnecting now...")
 			config.client_control.send_multipart([client, "", "200!"])
 

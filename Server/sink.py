@@ -42,8 +42,8 @@ class Config():
 
 class ReceiveFrames():
 	def _get_stream(self,config):
+		print("Ready to receive stream....")
 		while not config.complete:
-			print("Ready to receive stream....")
 			self.current_frame_string = self.__utility(config, True)
 			self.np_array = numpy.fromstring(self.current_frame_string, numpy.uint8)
 			self.current_frame = cv2.imdecode(self.np_array, cv2.IMREAD_COLOR)

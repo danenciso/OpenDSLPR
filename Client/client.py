@@ -54,6 +54,7 @@ class Transmit():
 	   		self.request.send(msg_req+"!"+str(self.identity))
 	   		print("DISCONNECT request sent to tcp://"+self.cntrl_ip+":"+self.control_port)
 			reply = self.request.recv()
+			print(reply)
 			if reply[:4]=="200!":
 				self.identity = 0
 				self.serv_ip = None
