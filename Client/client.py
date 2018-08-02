@@ -44,7 +44,7 @@ class Transmit():
 	   			self.data_port = address[1]
 	   	 	
 	   	 		print("Server accepted the connection")
-	   	 		print("I am assigned identity as "+self.identity)
+	   	 		print("Client: ID "+self.identity)
 	   	 		return 1
 	   		else:
 	   			print("ERROR "+reply[:4])
@@ -62,6 +62,7 @@ class Transmit():
 	   			print("Disconnected gracefully")
 	   			return 1
 	   		else:
+	   			print("ERROR")
 	   			return 0
 
 
@@ -96,6 +97,10 @@ class Transmit():
 		print("--------------End of frame parsing--------------")
 
 if __name__ == '__main__':
+	if len(sys.argv) != 2:
+		print("Usage : python <script_name> <video-file>")
+		sys.exit()
+
 	do_exit = False
 	context = zmq.Context()
 	#print("Current libzmq version is %s" % zmq.zmq_version())
@@ -106,7 +111,7 @@ if __name__ == '__main__':
 	time.sleep(1)
 	if status:
 		node.connection()
-		node.send(settings.client['video_file'])
+		node.send(sys.argv[1])
 		while do_exit==False:
 			try:
 				time.sleep(0.1)
@@ -116,4 +121,6 @@ if __name__ == '__main__':
 					do_exit=True
 				else:
 					continue
+		node.sender.close()
+		node.request.close()
 		context.term()

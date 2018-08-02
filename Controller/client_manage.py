@@ -14,7 +14,7 @@ class ManageClients(StoppableThread):
 
 	def _scan(self, config):
 		client, empty, receive = config.client_control.recv_multipart()
-		print(receive)
+		print("Client: "+receive)
 		#Ensure the 'connect' request is from a new client
 		if receive[:-1] == "CONNECT!" and receive[-1]=="0":
 			'''
@@ -24,17 +24,17 @@ class ManageClients(StoppableThread):
 			find_server = ClientConnectRule.connect_rule(config,0)
 
 			if find_server:
-				print("came inside find_server")
+				#print("came inside find_server")
 				print(find_server)
 				if not config.client_list:
 					clientID = "100000"
-					print("assigned 1st client ID")
+					#print("assigned 1st client ID")
 				else:
 					clientID = str(int(config.client_list[-1]) + 1)
 
 				err_count = 0
 				for server in find_server:
-					print("connecting to "+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
+					print("Controller: Connecting to "+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
 					config.command.connect("tcp://"+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
 					config.command.send("CONNECT!"+clientID)
 					reply = config.command.recv()
@@ -44,13 +44,13 @@ class ManageClients(StoppableThread):
 					config.command.disconnect("tcp://"+config.serv_meta[server][0]+":"+config.serv_meta[server][1])
 
 					#reply consists of server's pull-port
-					print("received reply from server "+reply)
+					print("Server "+server+": "+reply)
 					if(reply[:4]=="200!"):
 						config.client_list.append(clientID)
 						config.serv_meta[server].append(clientID)
 						config.serv_load[server] += 1
 						data_port = reply[4:8]
-						print("Sending reply 200!"+clientID+config.serv_meta[server][0]+":"+data_port)
+						print("Controller: Sending reply 200!"+clientID+config.serv_meta[server][0]+":"+data_port)
 
 						msg = "200!"+clientID+config.serv_meta[server][0]+":"+data_port
 
@@ -69,13 +69,36 @@ class ManageClients(StoppableThread):
 					config.client_control.send_multipart([client, "", "503!"])
 
 			else:
-				print("No server joined")
+				print("Controller: No server joined")
 				config.client_control.send_multipart([client, "", "503!"])
 
 		#Ensure the 'disconnect' request is from a valid client
 		elif receive[:11] == "DISCONNECT!" and receive[11:]!="0":
-			print("feature not complete, but disconnecting now...")
-			config.client_control.send_multipart([client, "", "200!"])
+			clientID = receive[11:]
+			for servID in config.serv_meta:
+				#check for client id in servID key of serv_meta dictionary
+				if clientID in config.serv_meta[servID]:
+					config.command.connect("tcp://"+config.serv_meta[servID][0]+":"+config.serv_meta[servID][1])
+					config.command.send("DISCONNECT!"+clientID)
+					reply = config.command.recv()
+
+					#for reliable working of REQ-REP
+					config.command.disconnect("tcp://"+config.serv_meta[servID][0]+":"+config.serv_meta[servID][1])
+
+					if(reply=="200!"):
+						config.serv_meta[servID].remove(clientID)
+						config.serv_load[servID] -= 1
+						#print(config.serv_meta)
+						#print(config.serv_load)
+
+						config.client_list.remove(clientID)
+						config.client_control.send_multipart([client, "", "200!"])
+						print("Controller: Disconnected client "+clientID)
+						break
+
+					else:
+						config.client_control.send_multipart([client, "", "400!"])
+						print("Controller: ERROR while disconnecting "+clientID)
 
 		#400 - Bad request
 		else:

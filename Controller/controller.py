@@ -44,7 +44,7 @@ class Config():
 if __name__ == '__main__':
 	do_exit = False
 	ctrl_config = Config()
-	print("Controller is listening for requests ...")
+	print("Controller: Listening for requests ...")
 
 	#create objects for both classes
 	#The object instatiation spawns a thread in the constructor for that object 

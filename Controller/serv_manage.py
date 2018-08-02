@@ -14,7 +14,7 @@ class ManageServers(StoppableThread):
 
 	def _join(self, config):
 		server, empty, receive = config.serv_control.recv_multipart()
-		print("Received "+receive)
+		print("Server: "+receive)
 		if receive[:5] == "JOIN!" and receive[5]=="0":
 			try:
 				config.command.connect("tcp://"+receive[6:])
@@ -22,7 +22,7 @@ class ManageServers(StoppableThread):
 				config.command.send(req)
 				#print("Sent CHECK! to server on tcp://"+receive[6:])
 				reply = config.command.recv()
-				print("in response to nudge, received from server "+reply)
+				print("Server: "+reply)
 
 				while reply == "400!":
 					#retry nudging the server
@@ -31,7 +31,7 @@ class ManageServers(StoppableThread):
 					config.command.send(req)
 					print("Resent CHECK! to server on tcp://"+receive[6:])
 					reply = config.command.recv()
-					print("in response to nudge, received from server "+reply)
+					print("Server: "+reply)
 
 				
 				if reply == "200!":
@@ -47,7 +47,7 @@ class ManageServers(StoppableThread):
 					config.serv_load[servID] = 0
 					print(config.serv_load)
 					msg = "200!"+servID
-					print(msg)
+					#print(msg)
 					config.serv_control.send_multipart([server, "", msg])
 
 			except:

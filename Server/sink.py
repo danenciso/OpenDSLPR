@@ -67,7 +67,7 @@ class ReceiveFrames():
 				if index != -1:
 					data += string[:index]
 					config.msg_count = config.msg_count+1
-					print(".") #just to see the progress
+					#print(".") #just to see the progress
 					#print("END of frame received")
 					break	
 

@@ -18,4 +18,4 @@ CLIENT
 controller_ip must be same as ip_add of controller
 rrport must be same as client control port of controller
 '''
-client = dict(controller_ip="127.0.0.1", rrport="8080", video_file="traffic_trim.mp4")
+client = dict(controller_ip="127.0.0.1", rrport="8080")

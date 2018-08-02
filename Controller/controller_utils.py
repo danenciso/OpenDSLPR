@@ -24,7 +24,7 @@ class StoppableThread(threading.Thread):
         if self.thread.is_alive() == True:
             # set event to signal thread to terminate
             self.stop_event.set()
-            print("I have set the stop event")
+            print("Controller: Preparing to stop a thread, waiting on join")
             # block calling thread until thread really has terminated
             self.thread.join()
         else:
