@@ -19,8 +19,10 @@ A Docker Image is now publicly available. If you have a Docker Hub account and D
 
 To run the client: **docker run --env serverad=XXX.XXX.XXX.XXX --env portnum XXXX --env videofile=path/somevideo dfedocke135/dslprclient:1.0**
 
+The startClient.sh script is intended for the Raspbian Docker Image and should only be run for clients for that context. The script can be modified to work for Docker for other processors, it is just a matter of correcting the image that is referred to in the script.
+
 ## Server
 Kept alive and is open to receive frames from Client sender. Python scripts initialize server instance and include dependencies for lincense plate recognition.
 
-Docker container coming soon.
+The startServer.sh will work for Docker on Ubuntu, Mac, and Windows.
  
